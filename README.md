@@ -1,14 +1,21 @@
 # jquery.messages
-Pluguin jquery para adicionar mensagens embutidas no html, o visual fica por conta do bootstrap.
+Pluguin jquery para adicionar mensagens embutidas no html, o visual fica por conta do Bootstrap (http://getbootstrap.com).
 
-Básico:
+
+Uso simples
+-----------
+
+Adiciona um html dentro da div, contendo uma mensagem de sucesso.
 
 ````js
-   $(".sucesso").messages({
-			type:"success",
+
+   $(".divClass").messages({
 			message:"Mensagem de sucesso!"
 		});
+
 ````
+-----------
+
 
 
 Mensagem simples
