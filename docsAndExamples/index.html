@@ -1,0 +1,163 @@
+<html>
+<head>
+	<title>Exemplos jQuery messages</title>
+	<link rel="stylesheet" href="./css/bootstrap.min.css"/>
+	<link rel="stylesheet" href="./css/style.css"/>
+	<link rel="shortcut icon" href="./icon.png" type="image/x-icon" />
+	<meta charset="UTF-8">
+</head>
+<body>
+
+	<nav class="navbar navbar-default navbar-fixed-top">
+		<div class="col-xs-12">
+			<div class="col-xs-11"><h2 class="center">jQuery Messages</h2></div>
+			<div class="col-xs-1"><a id="baixar" target="_blank" class="btn btn-lg btn-info pull-left" href="./js/jquery.messages.js">  Baixar ! </a></div>
+		</div>
+	</nav>
+	<div class="ex row">
+		<h3 class="center">Mensagem simples</h3>
+		<div class="sucesso"></div>
+		<h4>Como usar ?</h4>
+		<pre>
+			$(".sucesso").messages({<br/>
+				type:"success",<br/>
+				message:"Mensagem de sucesso!"<br/>
+			});
+		</pre>
+		<h5> O parametro <kbd>type</kbd> pode aceitar 4 parametros, <code>info, success, error e warning</code>, por padão ele é info.</h5>
+	</div>
+
+	<div class="ex row">
+		<h3 class="center">Mensagem temporizada</h3>
+		<div class="sucesso_hide"></div>
+		<h4>Como usar ?</h4>
+		<pre>
+			$(".sucesso_hide").messages({<br/>
+				type:"success",<br/>
+				message:"Mensagem de sucesso que será escondida em 5 segundos!",<br/>
+				secondsVisible: 5000 //milisegundos<br/>
+			});
+		</pre>
+		<h5> O parametro <kbd>secondsVisible</kbd> por padão é <code>0 (zero)</code>, que não ativa a funcionalidade. Para ativar, passe um valor numerico do tempo em milisegundos.</h5>
+	</div>
+
+	<div class="ex row">
+		<h3>Executar uma função extra</h3>
+		<div class="erro"></div>
+		<h4>Como usar ?</h4>
+		<pre>
+		$(".erro").messages({<br/>
+			type:"error",<br/>
+			message:"Mensagem de erro!",<br/>
+			extraFunction: function(){<br/>
+				console.log("Fazer alguma coisa...");<br/>
+			}<br/>
+		});
+		</pre>
+		<h5>O parametro <kbd>extraFunction</kbd> recebe uma função que é executada após gerado o conteúdo. Para ver o exemplo acima, veja o terminal do navegador.</h5>
+	</div>
+	<div class="ex row">
+		<h3>Gerando mensagens a partir de um vetor simples</h3>
+		<div class="inform"></div>
+		<h4>Como usar ?</h4>
+		<pre>
+		$(".inform").messages({<br/>
+			type:"info",<br/>
+			isSingleVector:true,<br/>
+			message:["Mensagem de informação!",<br/>
+			 "Estou te informando...", "Estou te informando mais uma vez...."]<br/>
+		});
+		</pre>
+		<h5>Defina a variavel <kbd>isSingleVector</kbd> como <code>true</code>, e então passe por parametro o vetor com a mensagem.</h5>
+	</div>
+	<div class="ex row">
+		<h3>Mensagens via json(padrão Vraptor)</h3>
+		<div class="alerta"></div>
+		<h4>como usar ?</h4>
+		<pre>
+		$(".alerta").messages({<br/>
+			type:"warning",<br/>
+			message:{"list":[{"message": "Mensagem de alerta!", "category": "warning"},<br/>
+			{"message": "Mensagem de alerta 2!", "category": "warning"}, <br/>
+			{"message": "Mensagem de alerta 3!", "category": "warning"}]},<br/>
+		});
+		</pre>
+		<h5>Observe no exemplo acima o formato de dados, deve ser neste estilo, vale observar que o parametro <kbd>type</kbd> é opcional, pois o tipo já esta sendo passado pelo json.</h5>
+	</div>
+
+	<div class="ex row">
+		<h3>Tipo da mensagem automático</h3>
+		<div class="auto"></div>
+		<h4>Como usar?</h4>
+		<pre>
+		$(".auto").messages({<br/>
+			autoDiscoverType:true,<br/>
+			message:{"list":[{"message": "Mensagem de alerta!", "category": "warning"},<br/>
+			{"message": "Mensagem de alerta 2!", "category": "warning"}, <br/>
+			{"message": "Mensagem de alerta 3!", "category": "warning"}]},<br/>
+		});
+		</pre>
+		<h5>Apenas com a mensagem via json, passando a categoria, o <kbd>type</kbd> é alterado.</h5>
+	</div>
+
+	<div class="ex row">
+		<h3>Maneira alternativa</h3>
+		<div id="clean"></div>
+		<h4>Como usar ?</h4>
+		<pre>
+			var mensagem_clean = {"list":[{"message": "Mensagem de erro!", "category": "error"},<br/>
+				{"message": "Mensagem de erro 2!", "category": "error"}, <br/>
+				{"message": "Mensagem de erro 3!", "category": "error"}]};<br/>
+
+			$("#clean").messages({}, mensagem_clean);<br/>
+		</pre>
+		<h5>Passe primeiro um conjunto de parametros vazio<code>{}</code>, depois passe a mensagem json no segundo parametro.</h5>
+	</div>
+	
+
+	<script type="text/javascript"  src="./js/jquery.js"></script>
+	<script type="text/javascript"  src="./js/bootstrap.js"></script>
+	<script type="text/javascript"  src="./js/jquery.messages.js"></script>
+
+	<script type="text/javascript">
+
+		
+		$(".sucesso").messages({
+			type:"success",
+			message:"Mensagem de sucesso!",
+		});
+
+		$(".erro").messages({
+			type:"error",
+			message:"Mensagem de erro!",
+			extraFunction: function(){
+				console.log("Fazer alguma coisa...");
+			}
+		});
+
+		$(".inform").messages({
+			type:"info",
+			isSingleVector:true,
+			message:["Mensagem de informação!", "Estou te informando...", "Estou te informando mais uma vez...."]
+		});
+
+		$(".alerta").messages({
+			type:"warning",
+			message:{"list":[{"message": "Mensagem de alerta!", "category": "warning"},{"message": "Mensagem de alerta 2!", "category": "warning"}, {"message": "Mensagem de alerta 3!", "category": "warning"}]},
+		});
+		$(".auto").messages({
+			autoDiscoverType:true,
+			message:{"list":[{"message": "Mensagem de alerta!", "category": "warning"},{"message": "Mensagem de alerta 2!", "category": "warning"}, {"message": "Mensagem de alerta 3!", "category": "warning"}]},
+		});
+		var mensagem_clean = {"list":[{"message": "Mensagem de erro!", "category": "error"},{"message": "Mensagem de erro 2!", "category": "error"}, {"message": "Mensagem de erro 3!", "category": "error"}]};
+
+		$("#clean").messages({}, mensagem_clean);
+
+		$(".sucesso_hide").messages({
+			type:"success",
+			message:"Mensagem de sucesso que será escondida em 5 segundos!",
+			secondsVisible: 5000
+		});
+	</script>
+</body>
+</html>

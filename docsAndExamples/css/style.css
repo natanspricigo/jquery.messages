@@ -1,0 +1,27 @@
+.ex{
+	width: 60%;
+	border: solid #627F96 1px;
+	margin: 3px;
+	
+	margin-left: auto;
+	margin-right: auto;
+	width: 80%;
+	padding: 1%;
+	background-color: white;
+}
+.center{
+	text-align: center;
+}
+.center h2{
+	color: #330033 ;
+}
+body{
+	background-color: #5A9EC5;
+	padding-top: 80px;
+}
+nav.navbar{
+	background-color: rgba(108, 158, 204, 0.78);
+}
+nav.navbar h2.center{
+	color: white;
+}
