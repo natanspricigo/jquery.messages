@@ -1,53 +1,104 @@
 if ($.fn == undefined) {
-	throw new Error('Adicionar o Jquery !!');
+	throw new Error('Adicionar o Jquery antes!!');
 }
 
 (function($) {
 
-	$.fn.messages = function(settings, mensagens) {
+	$.fn.messages = function(settings) {
+		
+		if (typeof settings == "string") {
+			switch (settings) {
+			case "destroy":
+				return this.each(function() {
+					$(this).empty();
+				});
+			}
+		}
+		
 		var config = {
 			message: '',
 			type: null,
 			category:null,
 			identification: new Date().getTime(),
-			template: "<div class='alert alert-block {type}'><button type='button' class='close' data-dismiss='alert'><i class='ace-icon fa fa-times'></i></button>{message}</div>",			
+			template: "<div class='alert alert-block {type}' style = 'margin-bottom: 5px;padding: 10px;'><button type='button' class='close' data-dismiss='alert'><i class='ace-icon fa fa-times'></i></button>{message}</div>",			
 			classContainer: "col-xs-12",
 			isSingleVector: false,
 			autoDiscoverType: false,
 			secondsVisible: 0,
+			timeVisible: 0,
+			group:true,
 			extraFunction: function() {}
 		};
 		settings = $.extend(config, settings);
 
-		if (mensagens) {
-			settings.message = mensagens;
-		};
-
 		var methods = {
-			classOnType: function() {
+			classOnType: function(type) {
 				
-				if(["info","informacao"].indexOf(settings.type)>-1) {
+				type = type==undefined?settings.type:type;
+				
+				if(["info","informacao"].indexOf(type)>-1) {
 					return "alert-info";
 				}
-				if(["error","erro"].indexOf(settings.type)>-1) {
+				if(["error","erro"].indexOf(type)>-1) {
 					return "alert-danger";
 				}
-				if(["success","sucesso"].indexOf(settings.type)>-1) {	
+				if(["success","sucesso"].indexOf(type)>-1) {	
 					return "alert-success";
 				}
-				if(["alert","alerta","warning"].indexOf(settings.type)>-1) {
+				if(["alert","alerta","warning"].indexOf(type)>-1) {
 					return "alert-warning";
 				}
 				return "alert-info";
 			},
+			crateObject: function(message, type){
+				return {message: message ,type:type};
+			},
 			solveJson: function() {
-				var mensagens = "";
-
+				
+				if(typeof settings.message != "object"){
+					return [];
+				}
+				var mensagens = [];
+				
+				function findForType(type){
+					return mensagens.filter(function(m){
+						return m.category && m.category == type;
+					});
+				}
+				function addToType(message,type){
+					var res = findForType(type);
+					res.forEach(function(e){
+						e.message = e.message + "<br>"+message
+					});
+				}
+			
 				try {
-					$.each(settings.message.list, function(key, value) {
-						mensagens += value.message + "<br/>";
-						if (settings.autoDiscoverType == true) {
-							settings.type = value.category;
+					$.each(settings.message, function(key, value) {
+						
+						var tipo = settings.autoDiscoverType == true && typeof value != "undefined" ? value.category : settings.type;
+						if (typeof tipo == "undefined" || (typeof tipo != "undefined" && tipo.length == 0)) {
+							tipo = "info";
+						}
+						switch (typeof value) {
+							case "string":
+								value = methods.crateObject(value, tipo);
+								break;
+							case "undefined":
+								value = methods.crateObject("&nbsp;", tipo);
+								break;
+							case "object":
+								if (Object.keys(value).length == 0) {
+									value = methods.crateObject("&nbsp;", tipo);
+								}
+								
+								break;
+						}
+						
+						var find = findForType(tipo);
+						if (find.length > 0 && settings.group == true) {
+							addToType(value.message, tipo);
+						}else{
+							mensagens.push(value);							
 						}
 					});
 				} catch (err) {
@@ -55,20 +106,17 @@ if ($.fn == undefined) {
 				}
 				return mensagens;
 			},
-			solveVector: function() {
-				var mensagens = "";
-				$.each(settings.message, function(key, value) {
-					mensagens += value + "<br/>";
-				});
-				return mensagens;
-			},
 			removeToTime: function() {
-				if (settings.secondsVisible && settings.secondsVisible > 0) {
+				if (settings.secondsVisible != undefined && isNumber(settings.secondsVisible)) {
+					settings.timeVisible = Number(settings.secondsVisible) * 1000;
+				}
+				
+				if (settings.timeVisible && settings.timeVisible > 0) {
 					setTimeout(function() {
 						$("#" + settings.identification).fadeOut(1000);
 						$("#" + settings.identification).trigger('rm');
-						
-					}, settings.secondsVisible);
+					}, settings.timeVisible);
+					
 					$("#" + settings.identification).on("rm", function(e){
 						e.stopPropagation();e.preventDefault();
 						setTimeout(function() {
@@ -81,26 +129,32 @@ if ($.fn == undefined) {
 
 		return this.each(function() {
 			var elem = $(this);
-			var message_display;
+			var message_display = [];
 			
 			if (settings.type == null) {
 				settings.autoDiscoverType=true;
 			};
-
-			if (settings.isSingleVector) {
-				message_display = methods.solveVector();
-			} else {
-				message_display = (settings.message.list && $.isArray(settings.message.list)) ? methods.solveJson() : settings.message;
+			if (typeof settings.message.list != "undefined") {
+				settings.message = settings.message.list;// evitar quebra de compatibilidade
 			}
-			if (elem != undefined) {
-				settings.template = settings.template.replace("{type}", methods.classOnType());
-				settings.template = settings.template.replace("{message}", message_display);
-				var block = "<div id='" + settings.identification + "' class='" + settings.classContainer + "' >" + settings.template + "</div>";
-				elem.html(block);
+			
+			//gerencia as maneiras como a mensagem chega, e transforma em uma coisa só
+			message_display = (settings.message && $.isArray(settings.message)) ? methods.solveJson() : settings.message;
+			
+			//injeta na DOM
+			if (elem != undefined && message_display.forEach) {
+				elem.empty();
+				var msg="";
+				message_display.forEach(function(m){
+					msg = settings.template.replace(new RegExp("{type}","gi"),methods.classOnType(m.category));
+					msg = msg.replace(new RegExp("{message}","gi"), m.message);
+					var block = "<div id='" + settings.identification + "' class='" + settings.classContainer + "' >" + msg + "</div>";
+					elem.append(block);
+				});
+				elem.removeAttr("style");
+				methods.removeToTime();
+				settings.extraFunction();
 			}
-			methods.removeToTime();
-			settings.extraFunction();
 		});
-
 	};
 })(jQuery);
