@@ -138,6 +138,10 @@ if ($.fn == undefined) {
 				settings.message = settings.message.list;// evitar quebra de compatibilidade
 			}
 			
+			if (typeof settings.message == "string") {
+				settings.message = [settings.message];
+			}
+			
 			//gerencia as maneiras como a mensagem chega, e transforma em uma coisa só
 			message_display = (settings.message && $.isArray(settings.message)) ? methods.solveJson() : settings.message;
 			
