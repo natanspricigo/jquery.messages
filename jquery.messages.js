@@ -107,7 +107,7 @@ if ($.fn == undefined) {
 				return mensagens;
 			},
 			removeToTime: function() {
-				if (settings.secondsVisible != undefined && isNumber(settings.secondsVisible)) {
+				if (settings.secondsVisible != undefined && !isNaN(Number(settings.secondsVisible)) && settings.secondsVisible > 0) {
 					settings.timeVisible = Number(settings.secondsVisible) * 1000;
 				}
 				
